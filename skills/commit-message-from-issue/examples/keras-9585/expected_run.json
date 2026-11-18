@@ -1,0 +1,97 @@
+{
+  "diff_chars": 2262,
+  "pool_size": 60,
+  "top_n": 5,
+  "chunk_size": 30,
+  "stage1_top": [
+    9538,
+    6899,
+    7115,
+    6950,
+    7156
+  ],
+  "stage2_ranked": [
+    9538,
+    7115,
+    6899,
+    6950,
+    7156
+  ],
+  "linked_issues": [
+    9538
+  ],
+  "linked_titles": [
+    "Tokenization crashes when split string has more than one character"
+  ],
+  "gold_issue_numbers": [
+    9538
+  ],
+  "hit_at_1": true,
+  "total_elapsed_s": 37.44,
+  "what_score": 4,
+  "why_score": 4,
+  "judge_reason": "The diff rewrites the translation logic in `text_to_word_sequence` so that multi-character `split` values work: on Python 3 it switches from the two-argument `maketrans(filters, split * len(filters))` form to the single-argument dict form, and on Python 2 it branches into unicode ordinal mapping, single-character `maketrans` fast path, and a repeated `str.replace` fallback; two tests are added for multi-character splits with byte and unicode input. The commit message describes every one of these branches precisely, including the Python 2/3 divergence and the added tests, so the 'What' is fully and accurately captured with no overstatement. The 'Why' is equally strong: it names the concrete symptom (the ValueError from unequal maketrans argument lengths), explains the root cause of why the old code broke for splits longer than one character, justifies the choice of the dict form, explains why Python 2 needs branching instead, notes the deliberate preservation of the fast path for the common case, and links the upstream issue (#9538). Essentially nothing is left to infer.",
+  "trace": [
+    {
+      "stage": 1,
+      "chunk": 0,
+      "chunk_size": 30,
+      "picked": [
+        6899,
+        6925,
+        6582,
+        6552,
+        6842,
+        6900,
+        6844,
+        6662
+      ],
+      "elapsed_s": 7.26
+    },
+    {
+      "stage": 1,
+      "chunk": 1,
+      "chunk_size": 30,
+      "picked": [
+        9538,
+        7115,
+        7100,
+        6950,
+        7204,
+        7107,
+        7013,
+        7156
+      ],
+      "elapsed_s": 6.31
+    },
+    {
+      "stage": 1,
+      "step": "merge",
+      "ranked": [
+        9538,
+        6899,
+        7115,
+        6950,
+        7156
+      ],
+      "elapsed_s": 6.9
+    },
+    {
+      "stage": 2,
+      "ranked": [
+        9538,
+        7115,
+        6899,
+        6950,
+        7156
+      ],
+      "elapsed_s": 6.79
+    },
+    {
+      "stage": "message",
+      "elapsed_s": 10.17,
+      "chars": 1318
+    }
+  ],
+  "llm_backend": "cli `claude -p` (Claude Code CLI)"
+}

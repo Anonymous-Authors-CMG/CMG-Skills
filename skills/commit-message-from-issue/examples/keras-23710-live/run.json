@@ -1,0 +1,111 @@
+{
+  "diff_chars": 2581,
+  "pool_size": 120,
+  "top_n": 5,
+  "chunk_size": 40,
+  "stage1_top": [
+    23710,
+    23709,
+    23251,
+    22213,
+    23553
+  ],
+  "stage2_ranked": [
+    23710,
+    23709,
+    23251,
+    22213,
+    23553
+  ],
+  "linked_issues": [
+    23710
+  ],
+  "linked_titles": [
+    "OrbaxLazyModule.available raises AttributeError instead of returning False"
+  ],
+  "total_elapsed_s": 59.06,
+  "repo": "keras-team/keras",
+  "mode": "live (GitHub API, no fixture)",
+  "what_score": 4,
+  "why_score": 4,
+  "note": "No gold label in live mode. Issue #23710 was manually confirmed correct: the staged diff fixes OrbaxLazyModule.initialize, which is exactly what #23710 reports. #23709 ranked 2nd is a sibling bug in the same property/file filed the same day.",
+  "trace": [
+    {
+      "stage": 1,
+      "chunk": 0,
+      "chunk_size": 40,
+      "picked": [
+        23710,
+        23709,
+        23696,
+        23694,
+        23707,
+        23601,
+        23553,
+        23632
+      ],
+      "elapsed_s": 5.97
+    },
+    {
+      "stage": 1,
+      "chunk": 1,
+      "chunk_size": 40,
+      "picked": [
+        23251,
+        22213,
+        23392,
+        23055,
+        22424,
+        21785,
+        23418,
+        21690
+      ],
+      "elapsed_s": 5.26
+    },
+    {
+      "stage": 1,
+      "chunk": 2,
+      "chunk_size": 40,
+      "picked": [
+        20686,
+        20260,
+        19832,
+        19425,
+        20980,
+        19455,
+        20601,
+        19571
+      ],
+      "elapsed_s": 6.39
+    },
+    {
+      "stage": 1,
+      "step": "merge",
+      "ranked": [
+        23710,
+        23709,
+        23251,
+        22213,
+        23553
+      ],
+      "elapsed_s": 8.52
+    },
+    {
+      "stage": 2,
+      "ranked": [
+        23710,
+        23709,
+        23251,
+        22213,
+        23553
+      ],
+      "elapsed_s": 9.34
+    },
+    {
+      "stage": "message",
+      "elapsed_s": 23.58,
+      "chars": 1444
+    }
+  ],
+  "llm_backend": "cli `claude -p` (Claude Code CLI)"
+}

@@ -1,0 +1,28 @@
+fix: raise ImportError when orbax.checkpoint lacks the v1 API
+
+OrbaxLazyModule.initialize() resolved `parent_module.v1` inside a try
+block that only caught ImportError. An orbax.checkpoint release that
+predates the v1 API imports cleanly but has no `v1` attribute, so the
+AttributeError escaped uncaught.
+
+Every call site in keras/ treats `LazyModule.available` as a plain
+boolean (`if x.available:` / `if not x.available: raise ...`), and
+`available` likewise only catches ImportError. The result was that
+`ocp.available` raised AttributeError instead of returning False, making
+the property impossible to guard on, and `saving_api.py` surfaced a bare
+"module 'orbax.checkpoint' has no attribute 'v1'" where it intended an
+ImportError carrying the pip install hint.
+
+Narrow the original try to the import itself and translate a missing
+`v1` into the same ImportError with the install message. A missing v1
+API is, from the caller's perspective, indistinguishable from orbax not
+being installed at all — both mean the feature is unusable and the fix
+is to install a suitable orbax — so reporting it through the existing
+ImportError path keeps `available` total and gives users an actionable
+message. `parent_module` is now assigned only after `v1` resolves, so a
+failed initialize leaves no half-populated state behind.
+
+Adds a regression test that builds a real v1-less orbax.checkpoint on
+disk and asserts `available` is False.
+
+Fixes #23710

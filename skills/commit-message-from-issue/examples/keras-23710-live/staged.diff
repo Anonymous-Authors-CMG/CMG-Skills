@@ -1,0 +1,66 @@
+diff --git a/keras/src/utils/module_utils.py b/keras/src/utils/module_utils.py
+index 5935901..cf8a50b 100644
+--- a/keras/src/utils/module_utils.py
++++ b/keras/src/utils/module_utils.py
+@@ -43,10 +43,16 @@ class OrbaxLazyModule(LazyModule):
+     def initialize(self):
+         try:
+             parent_module = importlib.import_module("orbax.checkpoint")
+-            self.module = parent_module.v1
+-            self.parent_module = parent_module
+         except ImportError:
+             raise ImportError(self.import_error_msg)
++        try:
++            self.module = parent_module.v1
++        except AttributeError:
++            # An orbax.checkpoint predating the v1 API imports cleanly but has
++            # no `v1`. Surface this as ImportError so that `available` can
++            # report False instead of letting AttributeError escape.
++            raise ImportError(self.import_error_msg)
++        self.parent_module = parent_module
+ 
+     def __getattr__(self, name):
+         if name == "_api_export_path":
+diff --git a/keras/src/utils/module_utils_test.py b/keras/src/utils/module_utils_test.py
+new file mode 100644
+index 0000000..00a7c05
+--- /dev/null
++++ b/keras/src/utils/module_utils_test.py
+@@ -0,0 +1,37 @@
++import importlib
++import os
++import sys
++import tempfile
++
++from keras.src import testing
++from keras.src.utils.module_utils import OrbaxLazyModule
++
++
++class OrbaxLazyModuleTest(testing.TestCase):
++    def test_available_is_false_without_v1_api(self):
++        """An orbax.checkpoint predating the v1 API must report unavailable.
++
++        The module imports cleanly but has no `v1` attribute, which used to let
++        an AttributeError escape the `available` property.
++        """
++        tmp = tempfile.mkdtemp()
++        pkg = os.path.join(tmp, "orbax", "checkpoint")
++        os.makedirs(pkg)
++        # `orbax` stays a namespace dir, as the real distribution ships it;
++        # `checkpoint` is a regular package that simply has no `v1`.
++        with open(os.path.join(pkg, "__init__.py"), "w") as f:
++            f.write("")
++
++        sys.path.insert(0, tmp)
++        saved = {k: v for k, v in sys.modules.items() if k.startswith("orbax")}
++        for k in saved:
++            del sys.modules[k]
++        importlib.invalidate_caches()
++        try:
++            ocp = OrbaxLazyModule("orbax")
++            self.assertFalse(ocp.available)
++        finally:
++            sys.path.remove(tmp)
++            for k in [k for k in sys.modules if k.startswith("orbax")]:
++                del sys.modules[k]
++            sys.modules.update(saved)

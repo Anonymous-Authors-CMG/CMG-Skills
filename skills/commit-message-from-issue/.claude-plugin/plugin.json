@@ -1,0 +1,20 @@
+{
+  "name": "commit-message-from-issue",
+  "version": "0.2.0",
+  "description": "Write commit messages that explain Why, by finding the open GitHub issue your staged change addresses (two-stage progressive-disclosure retrieval).",
+  "author": {
+    "name": "Anonymous-Authors-CMG"
+  },
+  "repository": "https://github.com/Anonymous-Authors-CMG/CMG-Skills",
+  "license": "MIT",
+  "keywords": [
+    "git",
+    "commit",
+    "commit-message",
+    "issue",
+    "github"
+  ],
+  "skills": [
+    "./"
+  ]
+}

@@ -1,0 +1,17 @@
+## Role & Task
+You are a software developer, and your team uses git for version control. You have just finished editing the code and are preparing to commit. Please write the commit message for this commit. To help you write a high-quality message, you have retrieved the related issue to understand the motivation.
+
+## Constraints
+1. The message must contain a **summary (What)** and detailed **reasons (Why)**
+2. Infer the "Why" by combining code changes with the relevant issue
+3. The message must explicitly cover both the technical details and the underlying rationale
+4. **Limit the commit type to one of the 10 allowed categories**
+5. Subject line: `<type>: <imperative summary>`, <= 72 chars, no trailing period
+6. Body: wrap at 72 columns; explain the user-visible symptom, the root cause, and why this fix is the right one. Do not narrate the diff line by line.
+7. If a related issue was identified, close with a `Fixes #<number>` trailer (one per issue). Never invent an issue number that was not supplied.
+8. **Output format: Direct commit message only. No markdown, no code fences, no preamble.**
+
+## Input Data
+1. **Code Changes:** {diff}
+2. **Type Definition:** {type_defs}
+3. **Relevant Issue:** {issue_report}

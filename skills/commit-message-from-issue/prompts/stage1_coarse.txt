@@ -1,0 +1,18 @@
+# TASK — STAGE 1 (COARSE RANKING)
+Rank the given GitHub issues by how likely each one is fixed by the code diff below.
+Only the issue TITLES are visible (this is deliberate — it keeps the context small
+so a large candidate pool can be scanned cheaply). Select the TOP {top_n} candidates.
+
+## CODE DIFF
+```
+{diff}
+```
+
+## CANDIDATE ISSUES (number | title)
+{candidates}
+
+## OUTPUT FORMAT — VERY STRICT
+Return ONLY a JSON array of plain integers — NO `#` prefix, NO quotes, NO prose, NO code fences.
+The array must contain exactly {top_n} issue numbers, ordered from MOST to LEAST likely.
+Correct example: [9538, 9401, 9277]
+Wrong examples: ["#9538", ...]  or  ```json [...] ```  or any explanation.

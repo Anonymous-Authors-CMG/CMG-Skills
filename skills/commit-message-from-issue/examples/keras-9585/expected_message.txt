@@ -1,0 +1,26 @@
+fix: support multi-character split in text_to_word_sequence
+
+Tokenizer raised "ValueError: the first two maketrans arguments must
+have equal length" whenever it was constructed with a split string
+longer than one character, making multi-character separators unusable.
+
+The root cause was the str.maketrans call: it was always invoked with
+the two-argument form, which requires the filters string and the
+replacement string to be the same length. Since the replacement was
+built as `split * len(filters)`, any split longer than one character
+made the two arguments differ in length and the call failed before any
+text was processed.
+
+On Python 3 the fix switches to the single-argument dict form of
+maketrans, which maps each filter character to an arbitrary-length
+replacement and therefore handles multi-character splits natively. On
+Python 2 the translate API has no such form, so the code branches: byte
+strings with a single-character split keep the fast maketrans path,
+unicode strings keep the existing ordinal mapping, and the remaining
+multi-character case falls back to repeated str.replace. This keeps the
+fast path intact for the common single-character case while making the
+documented `split` argument work for all values.
+
+Tests cover multi-character splits for both byte and unicode input.
+
+Fixes #9538

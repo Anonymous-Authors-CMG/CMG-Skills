@@ -1,0 +1,99 @@
+{
+  "llm_backend": "http https://api.deepseek.com model=deepseek-flash",
+  "diff_chars": 2262,
+  "diff_truncated": false,
+  "pool_size": 60,
+  "top_n": 5,
+  "chunk_size": 30,
+  "stage1_top": [
+    9538,
+    7115,
+    6458,
+    6547,
+    7290
+  ],
+  "stage2_ranked": [
+    9538,
+    7115,
+    6458,
+    6547,
+    7290
+  ],
+  "linked_issues": [
+    9538
+  ],
+  "linked_titles": [
+    "Tokenization crashes when split string has more than one character"
+  ],
+  "gold_issue_numbers": [
+    9538
+  ],
+  "hit_at_1": true,
+  "commit_message": "fix: support multi-character split in text_to_word_sequence\n\nTokenizer can be configured with a multi-character split string, but\ntext_to_word_sequence called maketrans with split * len(filters),\nwhich only works when split is one character. For split=\"any\",\nPython raised \"the first two maketrans arguments must have equal\nlength\" during fit_on_texts.\n\nReplace each filter character with the full split string using a\ntranslation dictionary on Python 3. Keep Python 2 compatibility by\nusing the existing single-character path when possible and falling\nback to repeated replace for multi-character splits. This preserves\nfiltering behavior while allowing arbitrary split strings.\n\nAdd regression tests for ASCII and Unicode text with multi-character\nsplits.\n\nFixes #9538\n",
+  "total_elapsed_s": 76.28,
+  "trace": [
+    {
+      "stage": 1,
+      "chunk": 0,
+      "chunk_size": 30,
+      "picked": [
+        6899,
+        6458,
+        6547,
+        6507,
+        6499,
+        6917,
+        6501,
+        6449
+      ],
+      "elapsed_s": 49.74,
+      "raw": "[6899, 6458, 6547, 6507, 6499, 6917, 6501, 6449]"
+    },
+    {
+      "stage": 1,
+      "chunk": 1,
+      "chunk_size": 30,
+      "picked": [
+        9538,
+        7115,
+        7290,
+        7100,
+        7049,
+        7054,
+        7244,
+        7124
+      ],
+      "elapsed_s": 20.93,
+      "raw": "[9538,7115,7290,7100,7049,7054,7244,7124]"
+    },
+    {
+      "stage": 1,
+      "step": "merge",
+      "ranked": [
+        9538,
+        7115,
+        6458,
+        6547,
+        7290
+      ],
+      "elapsed_s": 19.12
+    },
+    {
+      "stage": 2,
+      "ranked": [
+        9538,
+        7115,
+        6458,
+        6547,
+        7290
+      ],
+      "elapsed_s": 3.0,
+      "raw": "[9538, 7115, 6458, 6547, 7290]"
+    },
+    {
+      "stage": "message",
+      "elapsed_s": 4.42,
+      "chars": 771
+    }
+  ]
+}

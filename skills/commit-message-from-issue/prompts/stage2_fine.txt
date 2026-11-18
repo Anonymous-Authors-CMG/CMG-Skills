@@ -1,0 +1,17 @@
+# TASK — STAGE 2 (FINE RANKING)
+Re-rank the candidate GitHub issues by how likely each one is fixed by the code diff.
+Each candidate now shows both its TITLE and its full BODY description — only the
+survivors of Stage 1 are expanded, which is what keeps the context affordable.
+
+## CODE DIFF
+```
+{diff}
+```
+
+## CANDIDATE ISSUES
+{candidates}
+
+## OUTPUT FORMAT — VERY STRICT
+Return ONLY a JSON array of plain integers — NO `#` prefix, NO quotes, NO prose, NO code fences.
+The array must contain ALL given issue numbers, ordered from MOST to LEAST likely.
+Correct example: [9538, 9401, 9277]

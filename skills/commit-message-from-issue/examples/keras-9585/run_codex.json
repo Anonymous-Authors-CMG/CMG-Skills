@@ -1,0 +1,99 @@
+{
+  "llm_backend": "cli `codex exec --skip-git-repo-check <prompt>` (CM_LLM_CMD)",
+  "diff_chars": 2262,
+  "diff_truncated": false,
+  "pool_size": 60,
+  "top_n": 5,
+  "chunk_size": 30,
+  "stage1_top": [
+    9538,
+    7115,
+    6458,
+    6899,
+    7290
+  ],
+  "stage2_ranked": [
+    9538,
+    7115,
+    6458,
+    7290,
+    6899
+  ],
+  "linked_issues": [
+    9538
+  ],
+  "linked_titles": [
+    "Tokenization crashes when split string has more than one character"
+  ],
+  "gold_issue_numbers": [
+    9538
+  ],
+  "hit_at_1": true,
+  "commit_message": "fix: Support multicharacter separators in text tokenization\n\nTokenizer.fit_on_texts crashes with a ValueError when split contains\nmultiple characters because the two-argument maketrans form requires\nsource and replacement strings of equal length.\n\nUse dictionary-based translation on Python 3 to map each filtered\ncharacter to the full separator. For Python 2 byte strings, use\nreplacement for multicharacter separators while preserving the existing\nUnicode and single-character translation paths. This allows punctuation\nand explicit separators to produce the intended tokens across versions.\n\nAdd regression tests for multicharacter separators with both ordinary\nand Unicode text.\n\nFixes #9538\n",
+  "total_elapsed_s": 56.89,
+  "trace": [
+    {
+      "stage": 1,
+      "chunk": 0,
+      "chunk_size": 30,
+      "picked": [
+        6899,
+        6458,
+        6547,
+        6582,
+        6917,
+        6449,
+        6501,
+        6925
+      ],
+      "elapsed_s": 18.43,
+      "raw": "[6899, 6458, 6547, 6582, 6917, 6449, 6501, 6925]"
+    },
+    {
+      "stage": 1,
+      "chunk": 1,
+      "chunk_size": 30,
+      "picked": [
+        9538,
+        7115,
+        7290,
+        7054,
+        7124,
+        7156,
+        6950,
+        6997
+      ],
+      "elapsed_s": 14.43,
+      "raw": "[9538, 7115, 7290, 7054, 7124, 7156, 6950, 6997]"
+    },
+    {
+      "stage": 1,
+      "step": "merge",
+      "ranked": [
+        9538,
+        7115,
+        6458,
+        6899,
+        7290
+      ],
+      "elapsed_s": 11.48
+    },
+    {
+      "stage": 2,
+      "ranked": [
+        9538,
+        7115,
+        6458,
+        7290,
+        6899
+      ],
+      "elapsed_s": 10.7,
+      "raw": "[9538, 7115, 6458, 7290, 6899]"
+    },
+    {
+      "stage": "message",
+      "elapsed_s": 16.27,
+      "chars": 696
+    }
+  ]
+}

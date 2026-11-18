@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Local runs and scratch output
+/run.json
+/msg.txt
+*.log
+/tmp/
+/out/
+
+# Fixture worktrees and demo repos built by the scripts
+skills/*/examples/*/worktree/
+.commit-msg/
+
+# Node (npx skills cache / experiments)
+node_modules/
+skills-lock.json

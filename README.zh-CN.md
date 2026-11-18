@@ -6,6 +6,7 @@
 
 一个 Agent Skill：先找到你这次改动要修的那个 open issue，再根据它写提交信息。
 
+[![skills.sh installs](https://skills.sh/b/Anonymous-Authors-CMG/CMG-Skills)](https://skills.sh/Anonymous-Authors-CMG/CMG-Skills)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white)
 ![No dependencies](https://img.shields.io/badge/dependencies-none-brightgreen)

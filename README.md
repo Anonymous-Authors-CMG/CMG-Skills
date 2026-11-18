@@ -7,6 +7,7 @@
 An agent skill that finds the open issue your staged change fixes,
 then writes the commit message from it.
 
+[![skills.sh installs](https://skills.sh/b/Anonymous-Authors-CMG/CMG-Skills)](https://skills.sh/Anonymous-Authors-CMG/CMG-Skills)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white)
 ![No dependencies](https://img.shields.io/badge/dependencies-none-brightgreen)

@@ -1,0 +1,129 @@
+# Archive GitHub traffic (clones, views, referrers) every day.
+#
+# GitHub only keeps 14 days of traffic. This job merges each day's numbers
+# into CSV files on a separate `traffic` branch, so the history accumulates
+# and never touches `main`. Commits are made as github-actions[bot].
+#
+# Setup: add a repository secret TRAFFIC_TOKEN, a fine-grained token for this
+# repository with "Administration: Read-only" permission.
+name: traffic
+
+on:
+  schedule:
+    - cron: "17 2 * * *"   # daily, 02:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: traffic
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the traffic branch (create it if missing)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Switch to traffic branch
+        run: |
+          if git ls-remote --exit-code --heads origin traffic >/dev/null; then
+            git fetch origin traffic
+            git switch traffic
+          else
+            git switch --orphan traffic
+            git rm -rf --quiet . || true
+          fi
+
+      - name: Fetch and merge traffic data
+        env:
+          GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Secret TRAFFIC_TOKEN is not set (needs Administration: Read-only)."
+            exit 1
+          fi
+          python3 - <<'PY'
+          import csv, datetime, json, os, urllib.request
+
+          repo, token = os.environ["REPO"], os.environ["GH_TOKEN"]
+
+          def get(path):
+              req = urllib.request.Request(
+                  f"https://api.github.com/repos/{repo}/traffic/{path}",
+                  headers={"Authorization": f"Bearer {token}",
+                           "Accept": "application/vnd.github+json",
+                           "X-GitHub-Api-Version": "2022-11-28"})
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.load(r)
+
+          def merge_daily(name, key):
+              """Upsert per-day rows; later runs overwrite the same day."""
+              path = f"data/{name}.csv"
+              rows = {}
+              if os.path.exists(path):
+                  with open(path, newline="") as f:
+                      for r in csv.DictReader(f):
+                          rows[r["date"]] = r
+              for item in get(key)[key]:
+                  day = item["timestamp"][:10]
+                  rows[day] = {"date": day, "count": item["count"],
+                               "uniques": item["uniques"]}
+              os.makedirs("data", exist_ok=True)
+              with open(path, "w", newline="") as f:
+                  w = csv.DictWriter(f, fieldnames=["date", "count", "uniques"])
+                  w.writeheader()
+                  for day in sorted(rows):
+                      w.writerow(rows[day])
+              return [rows[d] for d in sorted(rows)]
+
+          clones = merge_daily("clones", "clones")
+          views = merge_daily("views", "views")
+
+          today = datetime.date.today().isoformat()
+          for name, path in (("referrers", "popular/referrers"),
+                             ("paths", "popular/paths")):
+              out = f"data/{name}.csv"
+              new = not os.path.exists(out)
+              with open(out, "a", newline="") as f:
+                  w = csv.writer(f)
+                  if new:
+                      w.writerow(["snapshot", "name", "count", "uniques"])
+                  for item in get(path):
+                      label = item.get("referrer") or item.get("path")
+                      w.writerow([today, label, item["count"], item["uniques"]])
+
+          def total(rows, col):
+              return sum(int(r[col]) for r in rows)
+
+          with open("README.md", "w") as f:
+              f.write("# Traffic archive\n\n")
+              f.write("Daily GitHub traffic, merged by `.github/workflows/traffic.yml` "
+                      "on `main`. GitHub itself keeps only 14 days.\n\n")
+              f.write(f"Last update: {today}\n\n")
+              f.write("| | total | sum of daily uniques | days |\n|---|---:|---:|---:|\n")
+              f.write(f"| clones | {total(clones,'count')} | {total(clones,'uniques')} | {len(clones)} |\n")
+              f.write(f"| views | {total(views,'count')} | {total(views,'uniques')} | {len(views)} |\n\n")
+              f.write("`npx skills add` and `claude plugin marketplace add` both clone "
+                      "the repo, so clones roughly track installs. Daily uniques "
+                      "summed over days over-count returning users.\n\n")
+              f.write("Files: `data/clones.csv`, `data/views.csv` (one row per day), "
+                      "`data/referrers.csv`, `data/paths.csv` (14-day snapshot per run).\n")
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md data
+          if git diff --cached --quiet; then
+            echo "no change"
+          else
+            git commit -m "traffic: $(date -u +%F)"
+            git push origin traffic
+          fi

@@ -1,0 +1,44 @@
+# Issue Commit for GitLab merge requests.
+#
+# Include it from your .gitlab-ci.yml:
+#
+#   include:
+#     - remote: https://raw.githubusercontent.com/Anonymous-Authors-CMG/CMG-Skills/v1/ci/gitlab-ci.yml
+#
+# and set these CI/CD variables (Settings > CI/CD > Variables, masked):
+#
+#   CM_API_KEY     key for an OpenAI-compatible API
+#   CM_LLM_MODEL   model name, e.g. gpt-4.1-mini or deepseek-chat
+#   CM_BASE_URL    optional, default https://api.openai.com/v1
+#   GITLAB_TOKEN   project access token: role Reporter, scope `api`
+#
+# Optional: CMG_POOL_SIZE (200), CMG_MIN_CONFIDENCE (medium), CMG_REF (v1),
+# CMG_DRY_RUN=true to only write the artifact, CMG_REPO to clone from a mirror
+# when runners cannot reach github.com.
+
+issue-commit:
+  stage: test
+  image: python:3.12-alpine
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: true
+  interruptible: true
+  timeout: 15m
+  variables:
+    GIT_STRATEGY: none
+    CMG_REF: v1
+    CMG_REPO: https://github.com/Anonymous-Authors-CMG/CMG-Skills.git
+    CMG_OUTPUT_DIR: $CI_PROJECT_DIR/cmg
+  before_script:
+    - apk add --no-cache git >/dev/null
+    - git clone --quiet --depth 1 --branch "$CMG_REF" "$CMG_REPO" /tmp/cmg-skills
+  script:
+    - |
+      ARGS=""
+      [ "$CMG_DRY_RUN" = "true" ] && ARGS="--dry-run"
+      python3 /tmp/cmg-skills/skills/commit-message-from-issue/scripts/ci_review.py $ARGS
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - cmg/

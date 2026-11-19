@@ -1,0 +1,34 @@
+# Runs the action from this checkout against a public PR in dry-run mode,
+# so a broken release is caught before users see it. Manual only, because it
+# spends LLM tokens. Needs secrets CMG_API_KEY, CMG_MODEL and optionally
+# CMG_BASE_URL.
+name: action-smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr-url:
+        description: PR or MR to review (dry run)
+        default: https://github.com/keras-team/keras/pull/24152
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Review (dry run, ignoring the existing Fixes line)
+        env:
+          CM_API_KEY: ${{ secrets.CMG_API_KEY }}
+          CM_BASE_URL: ${{ secrets.CMG_BASE_URL || 'https://api.openai.com/v1' }}
+          CM_LLM_MODEL: ${{ secrets.CMG_MODEL }}
+          GITHUB_TOKEN: ${{ github.token }}
+          CMG_FAIL_ON_ERROR: "true"
+          PR_URL: ${{ inputs.pr-url }}
+        run: |
+          python3 skills/commit-message-from-issue/scripts/ci_review.py \
+            --pr-url "$PR_URL" --ignore-existing-links --dry-run \
+            | tee -a "$GITHUB_STEP_SUMMARY"

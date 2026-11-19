@@ -235,6 +235,36 @@ git commit -F msg.txt     # 自己看过之后再提交
 | `--top-n` | 5 | 好几个标题看起来都像 |
 | `--chunk-size` | 40 | 如果第一阶段老是漏掉正确的 issue，就调小 |
 
+## 在每个 PR 上自动运行
+
+同样的方法，也可以作为 GitHub Action 或 GitLab CI 任务运行。PR 一打开，它会发一条评论，包含两部分：这个 PR 看起来在处理哪个 open issue（附上依据），以及一份写清楚「为什么改」的 squash 提交信息。它不改动任何东西；找不到对应的 issue 时会直接说明。
+
+```yaml
+# .github/workflows/issue-commit.yml
+on:
+  pull_request:
+    types: [opened, ready_for_review, reopened]
+permissions: { contents: read, issues: read, pull-requests: write }
+jobs:
+  suggest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Anonymous-Authors-CMG/CMG-Skills@v1
+        with:
+          api-key: ${{ secrets.CMG_API_KEY }}
+          model: ${{ secrets.CMG_MODEL }}
+```
+
+```yaml
+# .gitlab-ci.yml
+include:
+  - remote: https://raw.githubusercontent.com/Anonymous-Authors-CMG/CMG-Skills/v1/ci/gitlab-ci.yml
+```
+
+在 keras 和 gitlab-org/cli 的 5 个真实 PR / MR 上测试：4 个找到了正确的 issue，剩下 1 个本来就没有对应 issue，它也正确地回答了「没有匹配」。
+
+配置方法、参数说明、fork PR 的处理和成本，见 **[docs/ci.zh-CN.md](docs/ci.zh-CN.md)**。
+
 ## 哪些数据会离开你的电脑
 
 - **暂存的 diff 和 issue 内容**：发给你选的那个模型。
@@ -245,7 +275,7 @@ git commit -F msg.txt     # 自己看过之后再提交
 
 ## 局限
 
-- **目前只支持 GitHub。** GitLab、Jira 等还没接。
+- **只支持 GitHub 和 GitLab。** 本地 skill 读的是 GitHub issue；CI 机器人支持 GitHub 和 GitLab。Jira 等还没接。
 - **会出错。** 大约十次里有一次关联偏了。论文里发现，即使偏了，通常也落在相关的 issue 上，对 Why 仍有帮助。但提交前还是要看一眼。
 - **有的改动本来就没有 issue。** 这时输出的提交信息不带 `Fixes`，并会说明 Why 只是从 diff 推断的。这是故意的。
 - **要等 20–80 秒。** 毕竟要调 5 次模型。直连 API 最快。
@@ -255,11 +285,14 @@ git commit -F msg.txt     # 自己看过之后再提交
 ```
 CMG-Skills/
 ├── .claude-plugin/marketplace.json     Claude Code 插件市场
+├── action.yml                          GitHub Action
+├── ci/gitlab-ci.yml                    GitLab CI 模板
+├── docs/ci.zh-CN.md                    PR / MR 机器人说明
 └── skills/commit-message-from-issue/
     ├── SKILL.md                        agent 读的说明
     ├── .claude-plugin/plugin.json
     ├── prompts/                        第一阶段、第二阶段、生成、评分
-    ├── scripts/                        主流程、评分、示例构建
+    ├── scripts/                        主流程、PR/MR 机器人、评分、示例构建
     ├── examples/                       keras-9585（离线）、keras-23710（在线）
     └── references/                     论文数据、实测记录
 ```

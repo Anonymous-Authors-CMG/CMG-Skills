@@ -138,6 +138,10 @@ def _chat_url():
     return url if url.endswith("/chat/completions") else url + "/chat/completions"
 
 
+class FatalLLMError(RuntimeError):
+    """Bad key, no access, unknown model: retrying will not help."""
+
+
 def _call_http(prompt, timeout):
     if not LLM_MODEL:
         raise RuntimeError("HTTP backend needs a model: export CM_LLM_MODEL=...")
@@ -156,7 +160,8 @@ def _call_http(prompt, timeout):
             data = json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", "replace")[:300]
-        raise RuntimeError("HTTP %d from %s: %s" % (exc.code, _chat_url(), detail)) from exc
+        err = FatalLLMError if exc.code in (401, 403, 404) else RuntimeError
+        raise err("HTTP %d from %s: %s" % (exc.code, _chat_url(), detail)) from exc
     try:
         return data["choices"][0]["message"]["content"] or ""
     except (KeyError, IndexError, TypeError) as exc:
@@ -192,7 +197,9 @@ def llm(prompt, timeout=None, retries=None):
             if not out.strip():
                 raise RuntimeError("backend returned empty output")
             return out.strip()
-        except Exception as exc:  # noqa: BLE001 - retry on anything
+        except FatalLLMError:
+            raise
+        except Exception as exc:  # noqa: BLE001 - retry on anything else
             last = exc
             log("  llm call failed (attempt %d): %s" % (attempt, str(exc)[:200]))
             time.sleep(min(2 ** attempt, 8))

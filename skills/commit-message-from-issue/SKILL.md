@@ -188,11 +188,12 @@ These matter more than the score.
 ```
 commit-message-from-issue/
 ├── SKILL.md
-├── prompts/              stage1_coarse, stage2_fine, commit_message, type_defs, judge_what_why
+├── prompts/              stage1_coarse, stage2_fine, verify_link, commit_message, type_defs, judge_what_why
 ├── scripts/
 │   ├── pdil.py           backend resolution, CLI adapters, HTTP client, parsers, GitHub client
 │   ├── link_and_write.py the pipeline
 │   ├── score_message.py  0-4 What/Why judge
+│   ├── ci_review.py      PR/MR bot for GitHub Actions and GitLab CI (see docs/ci.md)
 │   ├── fetch_case.py     build an offline case from a merged PR
 │   └── setup_demo_repo.sh  throwaway repo with a fix already staged
 ├── examples/             keras-9585 (offline fixture), keras-23710-live, run_example.sh

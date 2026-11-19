@@ -248,6 +248,39 @@ git commit -F msg.txt     # after you've read it
 | `--top-n` | 5 | several titles look plausible |
 | `--chunk-size` | 40 | lower it if Stage 1 keeps missing the right issue |
 
+## On every pull request
+
+The same method as a GitHub Action or GitLab CI job. When a PR opens, it posts
+one comment: the open issue the PR seems to address, with the evidence, and a
+squash commit message that explains why. It edits nothing and says so when no
+issue matches.
+
+```yaml
+# .github/workflows/issue-commit.yml
+on:
+  pull_request:
+    types: [opened, ready_for_review, reopened]
+permissions: { contents: read, issues: read, pull-requests: write }
+jobs:
+  suggest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Anonymous-Authors-CMG/CMG-Skills@v1
+        with:
+          api-key: ${{ secrets.CMG_API_KEY }}
+          model: ${{ secrets.CMG_MODEL }}
+```
+
+```yaml
+# .gitlab-ci.yml
+include:
+  - remote: https://raw.githubusercontent.com/Anonymous-Authors-CMG/CMG-Skills/v1/ci/gitlab-ci.yml
+```
+
+On five real PRs and MRs from keras and gitlab-org/cli it found the right
+issue four times and correctly said "no match" for the fifth.
+Setup, inputs, fork PRs and cost: **[docs/ci.md](docs/ci.md)**.
+
 ## What leaves your machine
 
 - **The staged diff and issue text** go to whichever model backend you picked.
@@ -259,7 +292,8 @@ before installing if you want to check. It is about 400 lines.
 
 ## Limits
 
-- **GitHub only for now.** GitLab, Jira and others aren't wired up yet.
+- **GitHub and GitLab only.** The local skill reads GitHub issues; the CI bot
+  handles GitHub and GitLab. Jira and others aren't wired up yet.
 - **It can be wrong.** About one link in ten misses. In the paper, even misses
   usually landed on a closely related issue and still helped the Why, but you
   should look before you commit.
@@ -273,11 +307,14 @@ before installing if you want to check. It is about 400 lines.
 ```
 CMG-Skills/
 ├── .claude-plugin/marketplace.json     Claude Code marketplace
+├── action.yml                          GitHub Action
+├── ci/gitlab-ci.yml                    GitLab CI template
+├── docs/ci.md                          PR / MR bot guide
 └── skills/commit-message-from-issue/
     ├── SKILL.md                        what the agent reads
     ├── .claude-plugin/plugin.json
     ├── prompts/                        Stage 1, Stage 2, writer, judge
-    ├── scripts/                        pipeline, scorer, demo builders
+    ├── scripts/                        pipeline, PR/MR bot, scorer, demo builders
     ├── examples/                       keras-9585 (offline), keras-23710 (live)
     └── references/                     paper numbers, verified runs
 ```

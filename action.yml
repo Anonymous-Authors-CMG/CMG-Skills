@@ -1,0 +1,86 @@
+name: Issue Commit
+description: Find the open issue a pull request addresses and suggest a squash commit message that explains why.
+author: Anonymous-Authors-CMG
+branding:
+  icon: git-commit
+  color: blue
+
+inputs:
+  api-key:
+    description: Key for an OpenAI-compatible chat completions API.
+    required: true
+  base-url:
+    description: API base URL, e.g. https://api.openai.com/v1 or https://api.deepseek.com.
+    required: false
+    default: https://api.openai.com/v1
+  model:
+    description: Model name, e.g. gpt-4.1-mini or deepseek-chat.
+    required: true
+  github-token:
+    description: Token used to read the PR and issues and to post the comment.
+    required: false
+    default: ${{ github.token }}
+  pool-size:
+    description: How many open issues to consider (newest first).
+    required: false
+    default: "200"
+  min-confidence:
+    description: Lowest confidence (low, medium, high) at which an issue is suggested.
+    required: false
+    default: medium
+  include-drafts:
+    description: Also run on draft pull requests.
+    required: false
+    default: "false"
+  dry-run:
+    description: Write the result to the job summary only; do not comment.
+    required: false
+    default: "false"
+  fail-on-error:
+    description: Fail the job if the review itself errors. By default it only warns.
+    required: false
+    default: "false"
+  pr-number:
+    description: PR number, for events other than pull_request (e.g. workflow_dispatch).
+    required: false
+    default: ""
+
+outputs:
+  status:
+    description: ok, skipped or error.
+    value: ${{ steps.review.outputs.status }}
+  issue:
+    description: Number of the suggested issue, empty if none.
+    value: ${{ steps.review.outputs.issue }}
+  verdict:
+    description: fixes, partial, linked (already in the description), or empty.
+    value: ${{ steps.review.outputs.verdict }}
+  confidence:
+    description: high, medium or low.
+    value: ${{ steps.review.outputs.confidence }}
+  message:
+    description: The suggested squash commit message.
+    value: ${{ steps.review.outputs.message }}
+
+runs:
+  using: composite
+  steps:
+    - id: review
+      shell: bash
+      env:
+        CM_API_KEY: ${{ inputs.api-key }}
+        CM_BASE_URL: ${{ inputs.base-url }}
+        CM_LLM_MODEL: ${{ inputs.model }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        CMG_POOL_SIZE: ${{ inputs.pool-size }}
+        CMG_MIN_CONFIDENCE: ${{ inputs.min-confidence }}
+        CMG_FAIL_ON_ERROR: ${{ inputs.fail-on-error }}
+        CMG_PR_NUMBER: ${{ inputs.pr-number }}
+        CMG_OUTPUT_DIR: ${{ runner.temp }}/cmg
+        INCLUDE_DRAFTS: ${{ inputs.include-drafts }}
+        DRY_RUN: ${{ inputs.dry-run }}
+      run: |
+        args=()
+        [ "$INCLUDE_DRAFTS" = "true" ] && args+=(--include-drafts)
+        [ "$DRY_RUN" = "true" ] && args+=(--dry-run)
+        python3 "$GITHUB_ACTION_PATH/skills/commit-message-from-issue/scripts/ci_review.py" "${args[@]}"

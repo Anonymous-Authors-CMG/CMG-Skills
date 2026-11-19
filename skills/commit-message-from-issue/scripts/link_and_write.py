@@ -34,7 +34,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pdil import (  # noqa: E402
-    describe_backend, extract_int_list, fetch_open_issues, fmt_full, fmt_titles,
+    FatalLLMError, describe_backend, extract_int_list, fetch_open_issues, fmt_full, fmt_titles,
     llm, load_prompt, log, render, truncate_diff,
 )
 
@@ -83,13 +83,16 @@ def stage1_coarse(diff, candidates, top_n, chunk_size, trace):
             raw = llm(prompt)
             valid = {c["number"] for c in chunk}
             got = [n for n in extract_int_list(raw) if n in valid][:per_chunk]
+        except FatalLLMError:
+            raise
         except Exception as exc:  # noqa: BLE001
             log("  chunk %d failed: %s" % (idx, str(exc)[:200]))
-            raw, got = "", []
+            raw, got = None, []
         elapsed = round(time.time() - started, 2)
         log("  chunk %d/%d -> %s (%.2fs)" % (idx + 1, len(chunks), got, elapsed))
         return {"stage": 1, "chunk": idx, "chunk_size": len(chunk),
-                "picked": got, "elapsed_s": elapsed, "raw": raw[:400]}
+                "picked": got, "elapsed_s": elapsed, "failed": raw is None,
+                "raw": (raw or "")[:400]}
 
     # Chunks are independent, so scan them in parallel (paper, Sec. 6.3).
     workers = max(1, min(PARALLEL, len(chunks)))
@@ -98,6 +101,9 @@ def stage1_coarse(diff, candidates, top_n, chunk_size, trace):
     for item in results:  # keep chunk order for a deterministic merge
         picked.extend(item["picked"])
         trace.append(item)
+    if results and all(item["failed"] for item in results):
+        raise RuntimeError("every Stage-1 call failed; check the LLM backend "
+                           "with `python3 scripts/pdil.py --check`")
 
     # dedupe, preserving rank order
     seen, merged = set(), []

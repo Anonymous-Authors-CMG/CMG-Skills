@@ -1,0 +1,25 @@
+# TASK — LINK CHECK
+A retrieval step picked the issue below as the one most likely addressed by this
+change. It always returns *some* issue, even when none is related. Decide whether
+the change really addresses it.
+
+## CHANGE
+{change}
+
+## CANDIDATE ISSUE #{number}
+TITLE: {title}
+BODY:
+{body}
+
+## HOW TO JUDGE
+- "fixes": the change resolves the problem or request the issue describes.
+- "partial": the change clearly works on that issue but does not finish it.
+- "unrelated": sharing a file, module or vocabulary is NOT enough. If you cannot
+  point to a concrete connection between the code change and the issue, choose this.
+
+confidence: "high" only when the connection is specific and checkable (same
+function, same error message, same behaviour). Otherwise "medium" or "low".
+
+## OUTPUT FORMAT — VERY STRICT
+Return ONLY one JSON object, no prose, no code fences:
+{"verdict": "fixes" | "partial" | "unrelated", "confidence": "high" | "medium" | "low", "reason": "one or two sentences citing the concrete evidence"}

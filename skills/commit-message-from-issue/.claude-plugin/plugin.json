@@ -1,6 +1,6 @@
 {
   "name": "commit-message-from-issue",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Write commit messages that explain Why, by finding the open GitHub issue your staged change addresses (two-stage progressive-disclosure retrieval).",
   "author": {
     "name": "Anonymous-Authors-CMG"

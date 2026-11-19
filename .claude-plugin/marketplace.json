@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Issue-grounded commit message generation: link the staged diff to the open issue it fixes, then write What + Why.",
-    "version": "0.2.0"
+    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "commit-message-from-issue",
       "source": "./skills/commit-message-from-issue",
       "description": "Write commit messages that explain Why, by finding the open GitHub issue your staged change addresses (two-stage progressive-disclosure retrieval).",
-      "version": "0.2.0",
+      "version": "1.0.0",
       "license": "MIT",
       "keywords": [
         "git",

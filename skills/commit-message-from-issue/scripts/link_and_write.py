@@ -66,10 +66,19 @@ PARALLEL = int(os.environ.get("CM_PARALLEL", "4"))
 
 def stage1_coarse(diff, candidates, top_n, chunk_size, trace):
     """Title-only chunked coarse ranking. Returns the merged Top-N numbers."""
+    if len(candidates) <= top_n:
+        # Nothing to filter: every candidate goes to Stage 2 anyway.
+        log("stage 1: %d candidates <= top %d, skipping the title pass"
+            % (len(candidates), top_n))
+        trace.append({"stage": 1, "skipped": True, "kept": len(candidates)})
+        return [c["number"] for c in candidates]
+
     template = load_prompt("stage1_coarse.txt")
     chunks = [candidates[i:i + chunk_size]
               for i in range(0, len(candidates), chunk_size)]
-    per_chunk = max(top_n, math.ceil(top_n * 1.5))
+    # With one chunk there is nothing to merge, so ask for top_n directly
+    # instead of over-selecting and paying for a second pass.
+    per_chunk = top_n if len(chunks) == 1 else max(top_n, math.ceil(top_n * 1.5))
     picked = []
 
     log("stage 1: %d candidates -> %d chunk(s) of <=%d, keeping %d per chunk"

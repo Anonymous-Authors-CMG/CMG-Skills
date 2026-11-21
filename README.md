@@ -2,7 +2,7 @@
 
 Daily GitHub traffic, merged by `.github/workflows/traffic.yml` on `main`. GitHub itself keeps only 14 days.
 
-Last update: 2026-11-20
+Last update: 2026-11-21
 
 | | total | sum of daily uniques | days |
 |---|---:|---:|---:|

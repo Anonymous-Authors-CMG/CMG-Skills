@@ -2,12 +2,12 @@
 
 Daily GitHub traffic, merged by `.github/workflows/traffic.yml` on `main`. GitHub itself keeps only 14 days.
 
-Last update: 2026-11-22
+Last update: 2026-11-23
 
 | | total | sum of daily uniques | days |
 |---|---:|---:|---:|
-| clones | 117 | 75 | 17 |
-| views | 29 | 3 | 17 |
+| clones | 119 | 77 | 18 |
+| views | 29 | 3 | 18 |
 
 `npx skills add` and `claude plugin marketplace add` both clone the repo, so clones roughly track installs. Daily uniques summed over days over-count returning users.
 

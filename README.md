@@ -84,6 +84,16 @@ LLMs already describe *what* changed well. The gap is *why*, and the issue is
 what closes it. The retrieval puts the correct issue first about 9 times in 10
 (Hit@1 0.890, MRR 0.913). Full numbers: [`references/results.md`](skills/commit-message-from-issue/references/results.md).
 
+## Three ways to use it
+
+| | Where it runs | Get it |
+|---|---|---|
+| **VS Code extension** | The ✨ button in Source Control; a review panel | [vscode/](vscode/) · download the `.vsix` from [Releases](https://github.com/Anonymous-Authors-CMG/CMG-Skills/releases) |
+| **Agent skill** | Claude Code, Codex, Cursor, Gemini CLI and more | [Install](#install) below |
+| **PR / MR bot** | GitHub Actions, GitLab CI | [On every pull request](#on-every-pull-request) |
+
+![The VS Code extension panel](vscode/images/panel.png)
+
 ---
 
 ## Install
@@ -310,6 +320,7 @@ CMG-Skills/
 ├── action.yml                          GitHub Action
 ├── ci/gitlab-ci.yml                    GitLab CI template
 ├── docs/ci.md                          PR / MR bot guide
+├── vscode/                             VS Code extension (README, source, tests)
 └── skills/commit-message-from-issue/
     ├── SKILL.md                        what the agent reads
     ├── .claude-plugin/plugin.json

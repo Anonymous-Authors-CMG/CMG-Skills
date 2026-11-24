@@ -79,6 +79,16 @@ What 只靠 diff 就已经接近满分，真正差的是 Why，而补上 Why 靠
 
 检索部分大约 10 次里有 9 次把正确的 issue 排在第一（Hit@1 0.890，MRR 0.913）。完整数据见 [`references/results.md`](skills/commit-message-from-issue/references/results.md)。
 
+## 三种用法
+
+| | 在哪里用 | 获取 |
+|---|---|---|
+| **VS Code 插件** | 源代码管理里的 ✨ 按钮和审阅面板 | [vscode/](vscode/README.zh-CN.md) · 从 [Releases](https://github.com/Anonymous-Authors-CMG/CMG-Skills/releases) 下载 `.vsix` |
+| **Agent Skill** | Claude Code、Codex、Cursor、Gemini CLI 等 | 见下方[安装](#安装) |
+| **PR / MR 机器人** | GitHub Actions、GitLab CI | 见[在每个 PR 上自动运行](#在每个-pr-上自动运行) |
+
+![VS Code 插件面板](vscode/images/panel-zh.png)
+
 ---
 
 ## 安装
@@ -288,6 +298,7 @@ CMG-Skills/
 ├── action.yml                          GitHub Action
 ├── ci/gitlab-ci.yml                    GitLab CI 模板
 ├── docs/ci.zh-CN.md                    PR / MR 机器人说明
+├── vscode/                             VS Code 插件（说明、源码、测试）
 └── skills/commit-message-from-issue/
     ├── SKILL.md                        agent 读的说明
     ├── .claude-plugin/plugin.json

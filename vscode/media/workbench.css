@@ -1,0 +1,67 @@
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 24px 28px; color: var(--vscode-foreground); background: var(--vscode-editor-background); font-family: var(--vscode-font-family); font-size: var(--vscode-font-size); line-height: 1.55; }
+main { max-width: 1220px; margin: 0 auto; }
+header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin: 4px 0 18px; }
+.header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--vscode-textLink-foreground); font-weight: 700; }
+h1 { font-weight: 600; font-size: 22px; margin: 4px 0; letter-spacing: -.3px; }
+h2 { font-size: 15px; font-weight: 600; margin: 0; }
+p { margin: 4px 0 10px; }
+header p, .muted, .hint, footer, .section-heading p, .editor-footer { color: var(--vscode-descriptionForeground); }
+#meta { font-size: 12px; overflow-wrap: anywhere; }
+
+.statusbar { display: flex; align-items: center; gap: 10px; min-height: 42px; padding: 8px 14px; border: 1px solid var(--vscode-widget-border, var(--vscode-panel-border)); border-radius: 8px; margin-bottom: 16px; background: var(--vscode-textCodeBlock-background); }
+#status { flex: 1; overflow-wrap: anywhere; }
+.spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--vscode-progressBar-background); border-right-color: transparent; animation: spin .8s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.columns { display: grid; grid-template-columns: minmax(300px, .9fr) minmax(360px, 1.1fr); gap: 18px; align-items: start; }
+.card { border: 1px solid var(--vscode-panel-border); border-radius: 10px; padding: 20px; min-width: 0; }
+.section-heading { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+.section-heading p { font-size: 12px; margin-bottom: 0; }
+.step { font-family: var(--vscode-editor-font-family); font-size: 12px; min-width: 22px; text-align: center; border: 1px solid var(--vscode-panel-border); padding: 1px 6px; border-radius: 6px; color: var(--vscode-textLink-foreground); }
+.muted { font-size: 11px; overflow-wrap: anywhere; margin-bottom: 10px; }
+
+.candidate { display: flex; gap: 10px; border: 1px solid var(--vscode-panel-border); border-radius: 8px; padding: 12px 14px; margin: 8px 0; cursor: pointer; }
+.candidate:has(input:checked) { border-color: var(--vscode-focusBorder); background: var(--vscode-list-inactiveSelectionBackground); }
+.candidate input { margin: 4px 0 0; align-self: flex-start; accent-color: var(--vscode-focusBorder); }
+.candidate-content { min-width: 0; width: 100%; }
+.candidate strong { font-size: 13px; overflow-wrap: anywhere; }
+.candidate p { font-size: 12px; color: var(--vscode-descriptionForeground); margin: 4px 0; }
+.candidate p.reason { color: var(--vscode-foreground); }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.badge { font-size: 10px; padding: 0 6px; border-radius: 9px; border: 1px solid var(--vscode-panel-border); line-height: 16px; white-space: nowrap; }
+.badge.high { color: var(--vscode-testing-iconPassed, var(--vscode-charts-green)); border-color: currentColor; }
+.badge.medium { color: var(--vscode-editorWarning-foreground); border-color: currentColor; }
+.badge.low { color: var(--vscode-descriptionForeground); }
+.badge.branch, .badge.suggested { color: var(--vscode-textLink-foreground); border-color: currentColor; }
+.links { margin: 2px 0; }
+
+button { cursor: pointer; border: 1px solid var(--vscode-button-border, transparent); border-radius: 5px; padding: 6px 12px; color: var(--vscode-button-foreground); background: var(--vscode-button-background); font: inherit; font-size: 12px; }
+button:hover { background: var(--vscode-button-hoverBackground); }
+button.secondary { color: var(--vscode-button-secondaryForeground); background: var(--vscode-button-secondaryBackground); }
+button.secondary:hover { background: var(--vscode-button-secondaryHoverBackground); }
+button:disabled { opacity: .45; cursor: default; }
+button.text-button { color: var(--vscode-textLink-foreground); background: transparent; padding: 2px 0; }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: 2px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+textarea { width: 100%; min-height: 320px; padding: 14px; resize: vertical; border: 1px solid var(--vscode-input-border, var(--vscode-panel-border)); border-radius: 7px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); font-family: var(--vscode-editor-font-family); font-size: 13px; line-height: 1.7; }
+textarea:focus { outline: 1px solid var(--vscode-focusBorder); }
+textarea::placeholder, input::placeholder { color: var(--vscode-input-placeholderForeground); }
+.editor-footer { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; margin-top: 4px; }
+.editor-footer .over { color: var(--vscode-editorError-foreground); }
+.refine { display: flex; gap: 8px; margin-top: 10px; }
+.refine input { flex: 1; min-width: 0; padding: 6px 10px; border: 1px solid var(--vscode-input-border, var(--vscode-panel-border)); border-radius: 5px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); font: inherit; font-size: 12px; }
+
+.hint { font-size: 11px; margin: 12px 0 0; }
+#warnings, #evaluation { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px 14px; margin: 12px 0; border-left: 3px solid var(--vscode-editorWarning-foreground); background: var(--vscode-textBlockQuote-background); font-size: 12px; }
+#evaluation { border-color: var(--vscode-textLink-foreground); }
+.diff { margin-top: 18px; border-top: 1px solid var(--vscode-panel-border); padding: 14px 0; }
+summary { cursor: pointer; font-size: 12px; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--vscode-editor-font-family); font-size: 12px; max-height: 340px; overflow: auto; }
+footer { font-size: 11px; padding: 12px 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+[hidden] { display: none !important; }
+@media (max-width: 860px) { .columns { grid-template-columns: 1fr; } body { padding: 16px; } header { flex-direction: column; } }

@@ -1,0 +1,533 @@
+{
+  "name": "issue-commit",
+  "displayName": "%displayName%",
+  "description": "%description%",
+  "version": "1.0.0",
+  "publisher": "cmg-skills",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#1f3b73",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Anonymous-Authors-CMG/CMG-Skills.git",
+    "directory": "vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/Anonymous-Authors-CMG/CMG-Skills/issues"
+  },
+  "homepage": "https://github.com/Anonymous-Authors-CMG/CMG-Skills/tree/main/vscode#readme",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "commit",
+    "commit message",
+    "git",
+    "issue",
+    "github",
+    "gitlab",
+    "conventional commits",
+    "ai",
+    "llm",
+    "copilot",
+    "deepseek",
+    "openai",
+    "ollama"
+  ],
+  "main": "./out/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "extensionDependencies": [
+    "vscode.git"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "%untrusted%"
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "%virtual%"
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "issueCommit.generate",
+        "title": "%cmd.generate%",
+        "category": "Issue Commit",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "issueCommit.quickGenerate",
+        "title": "%cmd.quickGenerate%",
+        "category": "Issue Commit",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "issueCommit.setupModel",
+        "title": "%cmd.setupModel%",
+        "category": "Issue Commit"
+      },
+      {
+        "command": "issueCommit.configureProject",
+        "title": "%cmd.configureProject%",
+        "category": "Issue Commit"
+      },
+      {
+        "command": "issueCommit.setIssueToken",
+        "title": "%cmd.setIssueToken%",
+        "category": "Issue Commit"
+      },
+      {
+        "command": "issueCommit.setModelToken",
+        "title": "%cmd.setModelToken%",
+        "category": "Issue Commit"
+      },
+      {
+        "command": "issueCommit.diagnose",
+        "title": "%cmd.diagnose%",
+        "category": "Issue Commit"
+      },
+      {
+        "command": "issueCommit.settings",
+        "title": "%cmd.settings%",
+        "category": "Issue Commit"
+      },
+      {
+        "command": "issueCommit.openWalkthrough",
+        "title": "%cmd.openWalkthrough%",
+        "category": "Issue Commit"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "issueCommit.generate",
+          "when": "scmProvider == git && isWorkspaceTrusted && config.issueCommit.workflow.scmButton != 'quick'",
+          "group": "navigation@10"
+        },
+        {
+          "command": "issueCommit.quickGenerate",
+          "when": "scmProvider == git && isWorkspaceTrusted && config.issueCommit.workflow.scmButton == 'quick'",
+          "group": "navigation@10"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "issueCommit.generate",
+          "when": "isWorkspaceTrusted"
+        },
+        {
+          "command": "issueCommit.quickGenerate",
+          "when": "isWorkspaceTrusted"
+        }
+      ]
+    },
+    "walkthroughs": [
+      {
+        "id": "issueCommit.start",
+        "title": "%walk.title%",
+        "description": "%walk.description%",
+        "steps": [
+          {
+            "id": "model",
+            "title": "%walk.model.title%",
+            "description": "%walk.model.description%",
+            "media": {
+              "markdown": "walkthrough/model.md"
+            },
+            "completionEvents": [
+              "onCommand:issueCommit.setupModel",
+              "onSettingChanged:issueCommit.model.name",
+              "onSettingChanged:issueCommit.model.vscodeLm"
+            ]
+          },
+          {
+            "id": "issues",
+            "title": "%walk.issues.title%",
+            "description": "%walk.issues.description%",
+            "media": {
+              "markdown": "walkthrough/issues.md"
+            },
+            "completionEvents": [
+              "onCommand:issueCommit.setIssueToken",
+              "onCommand:issueCommit.configureProject"
+            ]
+          },
+          {
+            "id": "generate",
+            "title": "%walk.generate.title%",
+            "description": "%walk.generate.description%",
+            "media": {
+              "markdown": "walkthrough/generate.md"
+            },
+            "completionEvents": [
+              "onCommand:issueCommit.generate",
+              "onCommand:issueCommit.quickGenerate"
+            ]
+          },
+          {
+            "id": "tune",
+            "title": "%walk.tune.title%",
+            "description": "%walk.tune.description%",
+            "media": {
+              "markdown": "walkthrough/tune.md"
+            },
+            "completionEvents": [
+              "onSettingChanged:issueCommit.message.language",
+              "onSettingChanged:issueCommit.message.instructions",
+              "onSettingChanged:issueCommit.workflow.scmButton"
+            ]
+          }
+        ]
+      }
+    ],
+    "configuration": [
+      {
+        "title": "%config.title.model%",
+        "order": 1,
+        "properties": {
+          "issueCommit.model.provider": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "openai-compatible",
+              "vscode-lm"
+            ],
+            "default": "auto",
+            "scope": "resource",
+            "order": 1,
+            "markdownDescription": "%config.model.provider%",
+            "enumDescriptions": [
+              "%config.model.provider.auto%",
+              "%config.model.provider.api%",
+              "%config.model.provider.lm%"
+            ]
+          },
+          "issueCommit.model.baseUrl": {
+            "type": "string",
+            "default": "",
+            "scope": "resource",
+            "order": 2,
+            "markdownDescription": "%config.model.baseUrl%"
+          },
+          "issueCommit.model.name": {
+            "type": "string",
+            "default": "",
+            "scope": "resource",
+            "order": 3,
+            "markdownDescription": "%config.model.name%"
+          },
+          "issueCommit.model.token": {
+            "type": "string",
+            "default": "",
+            "scope": "machine",
+            "ignoreSync": true,
+            "order": 4,
+            "markdownDescription": "%config.model.token%"
+          },
+          "issueCommit.model.vscodeLm": {
+            "type": "string",
+            "default": "",
+            "scope": "resource",
+            "order": 5,
+            "markdownDescription": "%config.model.vscodeLm%"
+          },
+          "issueCommit.model.timeoutSeconds": {
+            "type": "integer",
+            "default": 120,
+            "minimum": 10,
+            "maximum": 600,
+            "scope": "resource",
+            "order": 6,
+            "markdownDescription": "%config.model.timeoutSeconds%"
+          }
+        }
+      },
+      {
+        "title": "%config.title.issues%",
+        "order": 2,
+        "properties": {
+          "issueCommit.issues.enabled": {
+            "type": "boolean",
+            "default": true,
+            "scope": "resource",
+            "order": 1,
+            "markdownDescription": "%config.issues.enabled%"
+          },
+          "issueCommit.issues.autoDetect": {
+            "type": "boolean",
+            "default": true,
+            "scope": "resource",
+            "order": 2,
+            "markdownDescription": "%config.issues.autoDetect%"
+          },
+          "issueCommit.issues.sources": {
+            "type": "array",
+            "default": [],
+            "scope": "resource",
+            "order": 3,
+            "markdownDescription": "%config.issues.sources%",
+            "items": {
+              "type": "object",
+              "required": [
+                "url",
+                "provider"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "%config.issues.sources.url%"
+                },
+                "provider": {
+                  "type": "string",
+                  "enum": [
+                    "github",
+                    "gitlab"
+                  ]
+                }
+              }
+            }
+          },
+          "issueCommit.issues.autoSelect": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "never"
+            ],
+            "default": "high",
+            "scope": "resource",
+            "order": 4,
+            "markdownDescription": "%config.issues.autoSelect%",
+            "enumDescriptions": [
+              "%config.issues.autoSelect.high%",
+              "%config.issues.autoSelect.medium%",
+              "%config.issues.autoSelect.never%"
+            ]
+          },
+          "issueCommit.issues.useBranchName": {
+            "type": "boolean",
+            "default": true,
+            "scope": "resource",
+            "order": 5,
+            "markdownDescription": "%config.issues.useBranchName%"
+          },
+          "issueCommit.issues.topN": {
+            "type": "integer",
+            "default": 3,
+            "minimum": 1,
+            "maximum": 10,
+            "scope": "resource",
+            "order": 6,
+            "markdownDescription": "%config.issues.topN%"
+          },
+          "issueCommit.issues.poolSize": {
+            "type": "integer",
+            "default": 120,
+            "minimum": 10,
+            "maximum": 1000,
+            "scope": "resource",
+            "order": 7,
+            "markdownDescription": "%config.issues.poolSize%"
+          },
+          "issueCommit.issues.chunkSize": {
+            "type": "integer",
+            "default": 40,
+            "minimum": 10,
+            "maximum": 100,
+            "scope": "resource",
+            "order": 8,
+            "markdownDescription": "%config.issues.chunkSize%"
+          },
+          "issueCommit.issues.maxBodyChars": {
+            "type": "integer",
+            "default": 8000,
+            "minimum": 1000,
+            "maximum": 30000,
+            "scope": "resource",
+            "order": 9,
+            "markdownDescription": "%config.issues.maxBodyChars%"
+          },
+          "issueCommit.issues.cacheMinutes": {
+            "type": "integer",
+            "default": 5,
+            "minimum": 0,
+            "maximum": 120,
+            "scope": "resource",
+            "order": 10,
+            "markdownDescription": "%config.issues.cacheMinutes%"
+          },
+          "issueCommit.github.token": {
+            "type": "string",
+            "default": "",
+            "scope": "machine",
+            "ignoreSync": true,
+            "order": 11,
+            "markdownDescription": "%config.github.token%"
+          },
+          "issueCommit.gitlab.token": {
+            "type": "string",
+            "default": "",
+            "scope": "machine",
+            "ignoreSync": true,
+            "order": 12,
+            "markdownDescription": "%config.gitlab.token%"
+          },
+          "issueCommit.issues.tokensByOrigin": {
+            "type": "object",
+            "default": {},
+            "additionalProperties": {
+              "type": "string"
+            },
+            "scope": "machine",
+            "ignoreSync": true,
+            "order": 13,
+            "markdownDescription": "%config.issues.tokensByOrigin%"
+          }
+        }
+      },
+      {
+        "title": "%config.title.message%",
+        "order": 3,
+        "properties": {
+          "issueCommit.message.language": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "en",
+              "zh-CN"
+            ],
+            "default": "auto",
+            "scope": "resource",
+            "order": 1,
+            "markdownDescription": "%config.message.language%",
+            "enumDescriptions": [
+              "%config.message.language.auto%",
+              "English",
+              "简体中文"
+            ]
+          },
+          "issueCommit.message.format": {
+            "type": "string",
+            "enum": [
+              "conventional",
+              "plain"
+            ],
+            "default": "conventional",
+            "scope": "resource",
+            "order": 2,
+            "markdownDescription": "%config.message.format%",
+            "enumDescriptions": [
+              "%config.message.format.conventional%",
+              "%config.message.format.plain%"
+            ]
+          },
+          "issueCommit.message.trailer": {
+            "type": "string",
+            "enum": [
+              "refs",
+              "fixes",
+              "none"
+            ],
+            "default": "refs",
+            "scope": "resource",
+            "order": 3,
+            "markdownDescription": "%config.message.trailer%",
+            "enumDescriptions": [
+              "%config.message.trailer.refs%",
+              "%config.message.trailer.fixes%",
+              "%config.message.trailer.none%"
+            ]
+          },
+          "issueCommit.message.instructions": {
+            "type": "string",
+            "default": "",
+            "scope": "resource",
+            "editPresentation": "multilineText",
+            "order": 4,
+            "markdownDescription": "%config.message.instructions%"
+          },
+          "issueCommit.message.useHistory": {
+            "type": "boolean",
+            "default": true,
+            "scope": "resource",
+            "order": 5,
+            "markdownDescription": "%config.message.useHistory%"
+          },
+          "issueCommit.diff.maxChars": {
+            "type": "integer",
+            "default": 24000,
+            "minimum": 2000,
+            "maximum": 100000,
+            "scope": "resource",
+            "order": 6,
+            "markdownDescription": "%config.diff.maxChars%"
+          }
+        }
+      },
+      {
+        "title": "%config.title.workflow%",
+        "order": 4,
+        "properties": {
+          "issueCommit.workflow.scmButton": {
+            "type": "string",
+            "enum": [
+              "panel",
+              "quick"
+            ],
+            "default": "panel",
+            "scope": "window",
+            "order": 1,
+            "markdownDescription": "%config.workflow.scmButton%",
+            "enumDescriptions": [
+              "%config.workflow.scmButton.panel%",
+              "%config.workflow.scmButton.quick%"
+            ]
+          },
+          "issueCommit.workflow.autoGenerate": {
+            "type": "boolean",
+            "default": true,
+            "scope": "resource",
+            "order": 2,
+            "markdownDescription": "%config.workflow.autoGenerate%"
+          },
+          "issueCommit.workflow.closeAfterApply": {
+            "type": "boolean",
+            "default": true,
+            "scope": "resource",
+            "order": 3,
+            "markdownDescription": "%config.workflow.closeAfterApply%"
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "test": "npm run compile && node --test test/*.test.cjs",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package --no-dependencies --baseContentUrl https://github.com/Anonymous-Authors-CMG/CMG-Skills/blob/main/vscode --baseImagesUrl https://raw.githubusercontent.com/Anonymous-Authors-CMG/CMG-Skills/main/vscode",
+    "publish:vsce": "vsce publish --no-dependencies --baseContentUrl https://github.com/Anonymous-Authors-CMG/CMG-Skills/blob/main/vscode --baseImagesUrl https://raw.githubusercontent.com/Anonymous-Authors-CMG/CMG-Skills/main/vscode",
+    "publish:ovsx": "ovsx publish --no-dependencies",
+    "test:host": "npm run compile && node test-host/runTest.cjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "1.95.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.7.0"
+  }
+}

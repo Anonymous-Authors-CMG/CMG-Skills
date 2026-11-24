@@ -1,0 +1,14 @@
+.vscode/**
+src/**
+test/**
+test-host/**
+images/**
+node_modules/**
+out/**/*.map
+media/icon.svg
+tsconfig.json
+package-lock.json
+README.zh-CN.md
+*.vsix
+.gitignore
+**/.DS_Store
